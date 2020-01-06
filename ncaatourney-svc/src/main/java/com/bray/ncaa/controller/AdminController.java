@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Calendar;
+import java.util.List;
 
 @RestController
 @RequestMapping("/pool")
@@ -16,20 +17,25 @@ public class AdminController {
     @GetMapping
     public PoolState getCurrentState(){
         // There should only be one state present
-        return stateRepository.findAll().get(0);
+        List<PoolState> state =  stateRepository.findAll();
+        if(state == null || state.size() == 0) return resetPoolState();
+        else return state.get(0);
     }
 
     @PostMapping
-    public void savePoolState(PoolState state){
+    public void savePoolState(@RequestBody PoolState state){
+        System.out.println("Received: " + state.toString());
         stateRepository.save(state);
     }
 
     @PutMapping("/reset")
-    public void resetPoolState(){
+    public PoolState resetPoolState(){
         stateRepository.deleteAll();
         PoolState state = new PoolState();
         state.setTourneyYear(Calendar.getInstance().get(Calendar.YEAR));
         state.setReadyForPicks(false);
         state.setTourneyStarted(false);
+        stateRepository.save(state);
+        return state;
     }
 }

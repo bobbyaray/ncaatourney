@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule, MatOptionModule, MatSelectModule, MatInputModule  } from  '@angular/material';
+import { MatToolbarModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule, MatOptionModule, MatDialogModule, MatSelectModule, MatInputModule  } from  '@angular/material';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatCardModule} from '@angular/material/card';
 import { LoginformComponent } from './loginform/loginform.component';
@@ -12,13 +12,21 @@ import { FormsModule } from '@angular/forms';
 import { AccountformComponent } from './accountform/accountform.component';
 import { MakepicksComponent } from './makepicks/makepicks.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
+import { AdminComponent } from './admin/admin.component';
+import { TeamDialogComponent } from './team-dialog/team-dialog.component';
+import {MatTableModule} from '@angular/material/table';
+import {MatRadioModule} from '@angular/material/radio';
+import {MatDividerModule} from '@angular/material/divider';
+import {HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginformComponent,
     AccountformComponent,
-    MakepicksComponent
+    MakepicksComponent,
+    AdminComponent,
+    TeamDialogComponent
   ],
   imports: [
     BrowserModule,
@@ -35,9 +43,15 @@ import {MatButtonToggleModule} from '@angular/material/button-toggle';
     MatSelectModule,
     MatInputModule,
     MatCardModule,
-    MatButtonToggleModule
+    MatButtonToggleModule,
+    MatDialogModule,
+    MatTableModule,
+    MatRadioModule,
+    MatDividerModule,
+    HttpClientModule
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [TeamDialogComponent]
 })
 export class AppModule { }

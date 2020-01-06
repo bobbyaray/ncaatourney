@@ -1,0 +1,38 @@
+<div style="padding:10px;">
+<h2>Pool State</h2>
+<table class="mat-table" style="padding:10px">
+    <tr class="mat-row">
+      <td class="mat-cell">Tourney Started</td>
+      <td class="mat-cell">
+        <mat-radio-group name="tourneyStarted" [(ngModel)]="poolState.tourneyStarted">
+            <mat-radio-button [value]="true" style="margin: 5px;">True</mat-radio-button>
+            <mat-radio-button [value]="false" style="margin: 5px;">False</mat-radio-button>
+          </mat-radio-group>
+      </td>
+    </tr>
+    <tr class="mat-row">
+        <td class="mat-cell">Ready For Picks</td>
+        <td class="mat-cell">
+          <mat-radio-group [(ngModel)]="poolState.readyForPicks">
+              <mat-radio-button [value]="true" style="margin: 5px;">True</mat-radio-button>
+              <mat-radio-button [value]="false" style="margin: 5px;">False</mat-radio-button>
+            </mat-radio-group>
+        </td>
+      </tr>
+      <tr class="mat-row">
+        <td class="mat-cell">Tourney Year</td>
+        <td class="mat-cell">
+            <mat-form-field class="example-full-width">
+                <input matInput placeholder="Year" [(ngModel)]="poolState.tourneyYear">
+              </mat-form-field>
+        </td>
+      </tr>
+  </table>
+  <button mat-raised-button color="primary" (click)="updatePoolState()">Update Pool State</button>
+  <br/><br/>
+  <mat-divider></mat-divider>
+<h2>Teams</h2>
+<button mat-raised-button color="primary" (click)="openAddTeamDialog()">Add a team</button><br/><br/>
+<mat-divider></mat-divider>
+<h2>Users</h2>
+</div>
