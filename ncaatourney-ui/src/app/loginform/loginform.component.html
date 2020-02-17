@@ -1,33 +1,35 @@
 <head>
   <style>
-    .example-form {
+    .login-form {
   min-width: 150px;
   max-width: 500px;
   width: 100%;
 }
 
-.example-full-width {
+.login-full-width {
   width: 100%;
 }
   </style>
 </head>
 <br/>
-<div style="width:50%; margin-right: auto; margin-left: auto;">
+<div class="mat-elevation-z8" style="width:40%; margin-right: auto; margin-left: auto;">
+  <span style="color:red" *ngIf="error">
+    {{error}}
+  </span>
   <mat-card [style.backgroundColor]="'WhiteSmoke'">
     <mat-card-header>
       <mat-card-title>Login Page</mat-card-title>
       <mat-card-subtitle>Please login to access your picks</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <form class="example-form">
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Username">
+        <mat-form-field class="login-full-width">
+          <input matInput placeholder="Email" [(ngModel)]="email">
         </mat-form-field>
-        <mat-form-field class="example-full-width">
-          <input matInput placeholder="Password">
+        <mat-form-field class="login-full-width">
+          <input matInput placeholder="Password" [(ngModel)]="password">
         </mat-form-field>
-      </form><br/>
-      <button mat-raised-button color="primary">Login</button>&nbsp;&nbsp;
+      <br/>
+      <button mat-raised-button color="primary" (click)="authenticateUser()">Login</button>&nbsp;&nbsp;
       <button routerLink="/createaccount" mat-raised-button color="primary">Create Account</button>
     </mat-card-content>
   </mat-card>

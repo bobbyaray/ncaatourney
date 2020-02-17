@@ -8,7 +8,6 @@ public class PoolState {
     @Id
     private String id;
 
-    private boolean tourneyStarted = false;
-    private boolean readyForPicks = false;
+    private TourneyState state;
     private int tourneyYear;
 }

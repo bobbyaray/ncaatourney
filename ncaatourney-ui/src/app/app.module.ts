@@ -10,7 +10,6 @@ import { MatCardModule} from '@angular/material/card';
 import { LoginformComponent } from './loginform/loginform.component';
 import { FormsModule } from '@angular/forms';
 import { AccountformComponent } from './accountform/accountform.component';
-import { MakepicksComponent } from './makepicks/makepicks.component';
 import {MatButtonToggleModule} from '@angular/material/button-toggle';
 import { AdminComponent } from './admin/admin.component';
 import { TeamDialogComponent } from './team-dialog/team-dialog.component';
@@ -18,15 +17,18 @@ import {MatTableModule} from '@angular/material/table';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatDividerModule} from '@angular/material/divider';
 import {HttpClientModule } from '@angular/common/http';
+import { UserportalComponent } from './userportal/userportal.component';
+import { TourneyComponent } from './tourney/tourney.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     LoginformComponent,
     AccountformComponent,
-    MakepicksComponent,
     AdminComponent,
-    TeamDialogComponent
+    TeamDialogComponent,
+    UserportalComponent,
+    TourneyComponent
   ],
   imports: [
     BrowserModule,

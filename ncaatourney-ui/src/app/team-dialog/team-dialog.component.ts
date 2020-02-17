@@ -9,7 +9,10 @@ import { Team } from '../admin/admin.component';
   styleUrls: ['./team-dialog.component.css']
 })
 export class TeamDialogComponent {
-  constructor(private dialogRef: MatDialogRef<TeamDialogComponent>,  @Inject(MAT_DIALOG_DATA) public team: Team) {}
+  editTeam: boolean = false;
+  constructor(private dialogRef: MatDialogRef<TeamDialogComponent>,  @Inject(MAT_DIALOG_DATA) public team: Team) {
+    if(team.name) this.editTeam = true;
+  }
 
   onNoClick(): void {
     this.dialogRef.close();

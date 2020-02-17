@@ -9,20 +9,20 @@ public class UserPicks {
     private String id;
 
     private String userID;
-    private Long seed_01;
-    private Long seed_02;
-    private Long seed_03;
-    private Long seed_04;
-    private Long seed_05;
-    private Long seed_06;
-    private Long seed_07;
-    private Long seed_08;
-    private Long seed_09;
-    private Long seed_10;
-    private Long seed_11;
-    private Long seed_12;
-    private Long seed_13;
-    private Long seed_14;
-    private Long seed_15;
-    private Long seed_16;
+    private String seed_01;
+    private String seed_02;
+    private String seed_03;
+    private String seed_04;
+    private String seed_05;
+    private String seed_06;
+    private String seed_07;
+    private String seed_08;
+    private String seed_09;
+    private String seed_10;
+    private String seed_11;
+    private String seed_12;
+    private String seed_13;
+    private String seed_14;
+    private String seed_15;
+    private String seed_16;
 }

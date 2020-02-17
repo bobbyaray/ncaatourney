@@ -2,6 +2,7 @@ package com.bray.ncaa.controller;
 
 import com.bray.ncaa.dao.PoolStateRepository;
 import com.bray.ncaa.model.PoolState;
+import com.bray.ncaa.model.TourneyState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,7 @@ public class AdminController {
         stateRepository.deleteAll();
         PoolState state = new PoolState();
         state.setTourneyYear(Calendar.getInstance().get(Calendar.YEAR));
-        state.setReadyForPicks(false);
-        state.setTourneyStarted(false);
+        state.setState(TourneyState.ADMIN_PICKS);
         stateRepository.save(state);
         return state;
     }

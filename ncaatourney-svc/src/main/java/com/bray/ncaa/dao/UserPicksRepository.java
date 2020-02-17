@@ -5,4 +5,5 @@ import org.springframework.data.mongodb.repository.MongoRepository;
 
 public interface UserPicksRepository extends MongoRepository<UserPicks, String> {
     public UserPicks findByUserID(String userID);
+
 }

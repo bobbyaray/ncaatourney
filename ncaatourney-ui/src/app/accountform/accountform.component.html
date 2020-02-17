@@ -12,7 +12,7 @@
   </style>
 </head>
 <br/>
-<div style="width:50%; margin-right: auto; margin-left: auto;">
+<div class="mat-elevation-z8" style="width:40%; margin-right: auto; margin-left: auto;">
   <mat-card [style.backgroundColor]="'WhiteSmoke'">
     <mat-card-header>
       <mat-card-title>Create Account</mat-card-title>
@@ -21,19 +21,22 @@
     <mat-card-content>
       <form class="example-form">
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Username">
+          <input matInput placeholder="First Name" [(ngModel)]="newUser.firstName" name="firstName">
         </mat-form-field>
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Password">
+            <input matInput placeholder="LastName" [(ngModel)]="newUser.lastName" name="lastName">
+        </mat-form-field>
+        <mat-form-field class="example-full-width" >
+          <input matInput placeholder="Password" [(ngModel)]="newUser.password" name="password">
         </mat-form-field>
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Email">
+          <input matInput placeholder="Email" [(ngModel)]="newUser.email" name="email">
         </mat-form-field>
         <mat-form-field class="example-full-width">
-          <input matInput placeholder="Display Name">
+          <input matInput placeholder="Display Name" [(ngModel)]="newUser.displayName" name="displayName">
         </mat-form-field>
       </form><br/>
-      <button mat-raised-button color="primary">Create Account</button>
+      <button mat-raised-button color="primary" (click)="saveUser()">Create Account</button>
     </mat-card-content>
   </mat-card>
 </div>

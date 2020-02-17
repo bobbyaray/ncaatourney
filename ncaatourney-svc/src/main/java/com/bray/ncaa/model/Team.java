@@ -8,6 +8,7 @@ public class Team {
     @Id
     private String id;
 
+    private String name;
     private short seed;
     private boolean alive;
     private short score64;

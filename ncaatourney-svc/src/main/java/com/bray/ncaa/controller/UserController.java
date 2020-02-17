@@ -23,6 +23,11 @@ public class UserController {
         return userRepository.findById(userID).get();
     }
 
+    @GetMapping("byemail")
+    public PoolUser getPoolUserByEmail(@RequestParam String email){
+        return userRepository.findByEmail(email);
+    }
+
     @DeleteMapping("/deleteall")
     public void deleteAllUsers(){
         userRepository.deleteAll();
@@ -34,8 +39,7 @@ public class UserController {
     }
 
     @PostMapping
-    @PutMapping
-    public void saveUser(@RequestBody PoolUser user){
-        userRepository.save(user);
+    public PoolUser saveUser(@RequestBody PoolUser user){
+        return userRepository.save(user);
     }
 }
