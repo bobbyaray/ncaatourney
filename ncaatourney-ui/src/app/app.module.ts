@@ -4,7 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatToolbarModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule, MatOptionModule, MatDialogModule, MatSelectModule, MatInputModule  } from  '@angular/material';
+import { MatToolbarModule, MatIconModule, MatSidenavModule, MatListModule, MatButtonModule, MatOptionModule, MatDialogModule, MatSelectModule, MatInputModule, MatSlideToggleModule  } from  '@angular/material';
 import { MatFormFieldModule} from '@angular/material/form-field';
 import { MatCardModule} from '@angular/material/card';
 import { LoginformComponent } from './loginform/loginform.component';
@@ -49,6 +49,7 @@ import { TourneyComponent } from './tourney/tourney.component';
     MatDialogModule,
     MatTableModule,
     MatRadioModule,
+    MatSlideToggleModule,
     MatDividerModule,
     HttpClientModule
   ],

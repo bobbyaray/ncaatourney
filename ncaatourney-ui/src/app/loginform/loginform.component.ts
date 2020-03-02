@@ -23,12 +23,13 @@ export class LoginformComponent implements OnInit {
     this.adminService.getPoolState().subscribe(poolState => {
       if(poolState.state == "TOURNEY"){
         //Forward to the Tourney Page
-      }
-
-      this.verifyUser();
-      if(this.user){
-        //User already authenticated, forward to the User Portal
-        this.router.navigateByUrl("/userportal");
+        this.router.navigateByUrl("/tourney");
+      }else{
+        this.verifyUser();
+        if(this.user){
+          //User already authenticated, forward to the User Portal
+          this.router.navigateByUrl("/userportal");
+        }
       }
     });
   }

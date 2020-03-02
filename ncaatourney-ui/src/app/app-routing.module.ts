@@ -4,6 +4,7 @@ import { LoginformComponent } from './loginform/loginform.component';
 import { AccountformComponent } from './accountform/accountform.component';
 import { AdminComponent } from './admin/admin.component';
 import { UserportalComponent } from './userportal/userportal.component';
+import { TourneyComponent } from './tourney/tourney.component';
 
 
 const routes: Routes = [
@@ -11,7 +12,8 @@ const routes: Routes = [
   {path: 'home', component: LoginformComponent},
   {path: 'createaccount', component: AccountformComponent},
   {path: 'admin', component: AdminComponent},
-  {path: 'userportal', component: UserportalComponent}
+  {path: 'userportal', component: UserportalComponent},
+  {path: 'tourney', component: TourneyComponent}
   ];
 
 @NgModule({

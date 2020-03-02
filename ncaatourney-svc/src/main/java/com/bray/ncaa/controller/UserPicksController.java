@@ -20,7 +20,14 @@ public class UserPicksController {
     @GetMapping
     public UserPicks getUserPicks(@RequestParam String userID){
         System.out.println("Getting user picks for: " + userID);
-        return picksRepository.findByUserID(userID);
+        UserPicks usersPicks = picksRepository.findByUserID(userID);
+        if(usersPicks == null){
+            usersPicks = new UserPicks();
+            usersPicks.setUserID(userID);
+            usersPicks = picksRepository.save(usersPicks);
+        }
+
+        return usersPicks;
     }
 
     @DeleteMapping("/deleteall")
