@@ -1,10 +1,9 @@
 package com.bray.ncaa.controller;
 
-import com.bray.ncaa.dao.TeamRepository;
 import com.bray.ncaa.model.Team;
+import com.bray.ncaa.service.TeamsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,34 +13,30 @@ import java.util.List;
 @Slf4j
 public class TeamController {
     @Autowired
-    private TeamRepository teamRepository;
+    private TeamsService teamsService;
 
     @GetMapping("/list")
     public List<Team> getAllTeams(){
-        return teamRepository.findAll(Sort.by(Sort.Direction.ASC, "seed"));
+        return teamsService.getAllTeams();
     }
 
-    @GetMapping
-    public Team getTeam(@RequestParam String teamID){
-        System.out.println("Getting team: " + teamID);
-        return teamRepository.findById(teamID).get();
+    @GetMapping("/{teamID}")
+    public Team getTeam(@PathVariable String teamID){
+        return teamsService.getTeamById(teamID);
     }
 
     @PostMapping
     @PutMapping
     public void saveTeam(@RequestBody Team team){
-        teamRepository.save(team);
+        if(team.getId() == null) {
+            teamsService.addTeam(team);
+        } else {
+            teamsService.updateTeam(team);
+        }
     }
 
-    @DeleteMapping
-    public void deleteTeam(@RequestParam String teamID){
-        log.info("Deleting team: {}", teamID);
-        teamRepository.deleteById(teamID);
+    @DeleteMapping("/{teamID}")
+    public void deleteTeam(@PathVariable String teamID){
+        teamsService.deleteTeam(teamID);
     }
-
-    @DeleteMapping("/deleteall")
-    public void deleteAllTeams(){
-        teamRepository.deleteAll();
-    }
-
 }

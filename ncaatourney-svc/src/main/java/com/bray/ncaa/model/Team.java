@@ -17,4 +17,8 @@ public class Team {
     private short score8;
     private short score4;
     private short score2;
+
+    public int getTotalScore() {
+        return score64 + score32 + score16 + score8 + score4 + score2;
+    }
 }

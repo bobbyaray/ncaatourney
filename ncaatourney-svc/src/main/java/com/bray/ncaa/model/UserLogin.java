@@ -1,2 +1,9 @@
-package com.bray.ncaa.model;public class UserLogin {
+package com.bray.ncaa.model;
+
+import lombok.Data;
+
+@Data
+public class UserLogin {
+    private String email;
+    private String password;
 }

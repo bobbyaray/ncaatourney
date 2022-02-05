@@ -50,17 +50,12 @@
                             <outputDirectory>${project.build.directory}/classes/resources</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${project.parent.basedir}/ncaatourney-ui/dist/ncaatourney-ui</directory>
+                                    <directory>${project.parent.basedir}/ncaatourney-ui/build</directory>
                                 </resource>
                             </resources>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

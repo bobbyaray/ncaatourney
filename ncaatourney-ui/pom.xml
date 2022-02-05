@@ -37,7 +37,7 @@
               </goals>
             </execution>
             <execution>
-              <id>npm run build</id>
+              <id>Build frontend</id>
               <goals>
                 <goal>npm</goal>
               </goals>

@@ -2,6 +2,9 @@ package com.bray.ncaa.controller;
 
 import com.bray.ncaa.dao.PoolUserRepository;
 import com.bray.ncaa.model.PoolUser;
+import com.bray.ncaa.model.UserLogin;
+import com.bray.ncaa.service.UsersService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,37 +12,43 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/user")
+@Slf4j
 public class UserController {
     @Autowired
-    private PoolUserRepository userRepository;
+    private UsersService userService;
 
     @GetMapping("/list")
     public List<PoolUser> getAllPoolUsers(){
-        return userRepository.findAll();
+        return userService.getAllPoolUsers();
     }
 
-    @GetMapping()
-    public PoolUser getPoolUser(@RequestParam String userID){
-        return userRepository.findById(userID).get();
+    @GetMapping("/{userID}")
+    public PoolUser getPoolUser(@PathVariable String userID){
+        return userService.getPoolUser(userID);
     }
 
     @GetMapping("byemail")
     public PoolUser getPoolUserByEmail(@RequestParam String email){
-        return userRepository.findByEmail(email);
+        return userService.getPoolUserByEmail(email);
     }
 
     @DeleteMapping("/deleteall")
     public void deleteAllUsers(){
-        userRepository.deleteAll();
+        userService.deleteAllUsers();
     }
 
-    @DeleteMapping()
-    public void deleteUser(@RequestParam String userID){
-        userRepository.deleteById(userID);
+    @DeleteMapping("/{userID}")
+    public void deleteUser(@PathVariable String userID){
+        userService.deleteUser(userID);
     }
 
     @PostMapping
     public PoolUser saveUser(@RequestBody PoolUser user){
-        return userRepository.save(user);
+        return userService.saveUser(user);
+    }
+
+    @PostMapping("login")
+    public String userLogin(@RequestBody UserLogin userLogin) {
+        return userService.processUserLogin(userLogin);
     }
 }
