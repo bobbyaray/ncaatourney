@@ -6,7 +6,6 @@ import Button from 'react-bootstrap/Button'
 
 class TeamUpdate extends React.Component {
     routeToAdmin = () => {
-        alert('Routing to admin');
         const { history } = this.props;
         history.push('/admin');
     }
@@ -56,7 +55,7 @@ class TeamUpdate extends React.Component {
         this.state = {
           id: '',
           name: '',
-          seed: 0,
+          seed: 1,
           alive: false,
           score64: 0,
           score32: 0,

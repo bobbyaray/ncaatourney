@@ -18,13 +18,11 @@ public class UserDaoIT {
     @Test
     public void testUserDAO(){
         PoolUser newUser = new PoolUser();
-        newUser.setAdmin(false);
         newUser.setEmail("someone@gmail.com");
         newUser.setDisplayName("Someone");
         newUser.setFirstName("Some");
         newUser.setLastName("One");
         newUser.setPassword("password");
-        newUser.setScore(0);
 
         userRepository.save(newUser);
 
@@ -39,13 +37,11 @@ public class UserDaoIT {
 
         // Now add another user
         newUser = new PoolUser();
-        newUser.setAdmin(false);
         newUser.setEmail("someone2@gmail.com");
         newUser.setDisplayName("Someone2");
         newUser.setFirstName("Some");
         newUser.setLastName("One2");
         newUser.setPassword("password");
-        newUser.setScore(0);
         userRepository.save(newUser);
 
         // Now retrieve again

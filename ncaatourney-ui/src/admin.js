@@ -31,7 +31,7 @@ class Admin extends React.Component {
         state: this.state.tourney_state})
     };
 
-    fetch('/pool/state', requestOptions).then(response => this.updateTeams());
+    fetch('/pool/state', requestOptions).then(response => this.fetchPoolState());
   };
   
   updateTeams = () => {
@@ -115,7 +115,7 @@ class Admin extends React.Component {
           tourney_year: '',
           tourney_state: '',
           add_team_name: '',
-          add_team_seed: '',
+          add_team_seed: 1,
           teams: [],
           users: []
       };

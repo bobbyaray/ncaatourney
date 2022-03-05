@@ -35,6 +35,10 @@
         text-align: left;
 }
 
+.color-nav {
+  background-color: #306030;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);

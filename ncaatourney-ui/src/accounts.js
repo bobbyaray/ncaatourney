@@ -4,6 +4,7 @@ import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { withRouter } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 
 
 class Login extends React.Component {
@@ -12,6 +13,8 @@ class Login extends React.Component {
         this.state = {
           email: '',
           password: '',
+          error: '',
+          showError: false
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -31,18 +34,38 @@ class Login extends React.Component {
           body: JSON.stringify({ email: this.state.email, password: this.state.password})
       };
 
-      fetch('user/login', requestOptions)
-      .then(response => response.json())
-      .then(data => alert(data));
+      const { history } = this.props;
 
-        event.preventDefault();
+      fetch('/user/login', requestOptions)
+      .then(response => {
+        if (response.status !== 200) {
+          response.json().then(data => {
+            this.setState({error: data.message, showError: true});
+            return Promise.reject(response);
+          });
+       } else {
+          return response.json();
+       }
+      })
+      .then(data => {
+        localStorage.setItem("ncaauser", JSON.stringify(data));
+        this.props.onUserLogin();
+        history.push('/useraccount/' + data.id);
+      });
+      
+      event.preventDefault();
     }
 
     render(){
         return(
             <div>
-            <h2>2022 NCAA Tournament Pool</h2>
-        <Card bg="dark" text="white" style={{ width: '30rem' }}>
+            <h2>NCAA Tournament Pool</h2>
+            <div style={{ display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+            <Alert show={this.state.showError} variant="danger" style={{width: "30rem"}}>
+                    {this.state.error}
+                </Alert>
+            </div>
+        <Card variant='light' text="white" style={{ width: '30rem', backgroundColor: '#306030' }}>
         <Card.Header>Login</Card.Header>
           <Card.Body>
                 <Form onSubmit={this.handleSubmit}>
@@ -57,15 +80,15 @@ class Login extends React.Component {
                   </Form.Group>
                   <Button onClick={this.handleSubmit} variant="primary">
                     Submit
+                  </Button>&nbsp;
+                  <Button href="/register" variant="primary">
+                    Create an Account
                   </Button>
                 </Form>
           </Card.Body>
-          <Card.Body>
-            <Card.Link href="/register">Create an Account</Card.Link>
-            </Card.Body>
         </Card></div>);
     }
 }
 
-export default Login;
+export default withRouter(Login);
 

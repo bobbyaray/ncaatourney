@@ -6,7 +6,9 @@ import com.bray.ncaa.model.UserLogin;
 import com.bray.ncaa.service.UsersService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -44,11 +46,22 @@ public class UserController {
 
     @PostMapping
     public PoolUser saveUser(@RequestBody PoolUser user){
-        return userService.saveUser(user);
+        try {
+            return userService.saveUser(user);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @PostMapping("login")
-    public String userLogin(@RequestBody UserLogin userLogin) {
-        return userService.processUserLogin(userLogin);
+    public PoolUser userLogin(@RequestBody UserLogin userLogin) {
+        try {
+            return userService.processUserLogin(userLogin);
+        } catch (Exception e) {
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, e.getMessage());
+
+        }
     }
 }

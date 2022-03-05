@@ -3,6 +3,7 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { withRouter } from 'react-router-dom';
+import { Alert } from 'react-bootstrap';
 
 export class Register extends React.Component {
     routeUser = () => {
@@ -20,11 +21,15 @@ export class Register extends React.Component {
         lastName: '',
         displayName: '',
         admin: 'false',
-        score: '0'
+        score: '0',
+        error: '',
+        showError: false
       };
 
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
+
+      localStorage.removeItem("ncaauser");
     }
 
     handleChange(event) {
@@ -48,7 +53,16 @@ export class Register extends React.Component {
       };
 
       fetch('user', requestOptions)
-      .then(response => response.json())
+      .then(response => {
+        if (response.status !== 200) {
+          response.json().then(data => {
+            this.setState({error: data.message, showError: true});
+            return Promise.reject(response);
+          });
+        } else {
+          return response.json();
+        }
+      })
       .then(data => {
           this.state.userid = data.id;
           this.routeUser();
@@ -59,8 +73,13 @@ export class Register extends React.Component {
     render(){
         return(
             <div>
-            <h2>2022 NCAA Tournament Pool</h2>
-        <Card bg="dark" text="white" style={{ width: '30rem' }}>
+            <h2>NCAA Tournament Pool</h2>
+            <div style={{ display: 'flex',  justifyContent:'center', alignItems:'center'}}>
+            <Alert show={this.state.showError} variant="danger" style={{width: "30rem"}}>
+                    {this.state.error}
+                </Alert>
+            </div>
+            <Card variant='light' text="white" style={{ width: '30rem', backgroundColor: '#306030' }}>
         <Card.Header>Create an Account</Card.Header>
           <Card.Body>
                 <Form onSubmit={this.handleSubmit}>

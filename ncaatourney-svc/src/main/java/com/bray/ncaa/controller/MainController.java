@@ -10,6 +10,7 @@ public class MainController {
             "/admin",
             "/login",
             "/register",
+            "/tourney",
             "/useraccount/*",
             "/teamupdate/*"})
     public String mainPage(){
