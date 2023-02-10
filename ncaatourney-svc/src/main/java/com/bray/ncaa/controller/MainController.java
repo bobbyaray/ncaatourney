@@ -5,14 +5,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 public class MainController {
-    @RequestMapping(value={"/",
-            "home",
-            "/admin",
-            "/login",
-            "/register",
-            "/tourney",
-            "/useraccount/*",
-            "/teamupdate/*"})
+    @RequestMapping(value={"/ncaa",
+            "/ncaa/**"})
     public String mainPage(){
         return "forward:/index.html";
     }

@@ -1,19 +1,18 @@
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Login from './accounts'
-import Admin from './admin'
-import UserAccount from './useraccount'
-import Register from './register'
-import TeamUpdate from './teamupdate';
-import Tourney from './tourney';
-import AppNavBar from './appnavbar';
+import Login from './Login'
+import Admin from './Admin';
+import UserAccount from './UserAccount'
+import Register from './Register'
+import TeamUpdate from './TeamUpdate';
+import Tourney from './Tourney';
+import AppNavBar from './Appnavbar';
 import React, { Component } from 'react';
 
 import {
   BrowserRouter as Router,
   Switch,
-  Route,
-  Link
+  Route
 } from "react-router-dom";
 
 class App extends Component {
@@ -25,7 +24,8 @@ class App extends Component {
     this.state = {
       userName: '',
       userId: '',
-      isLoggedIn: false
+      isLoggedIn: false,
+      isAdmin: false
     };
 
     this.userLogin();
@@ -44,21 +44,22 @@ class App extends Component {
       <AppNavBar userName={this.state.userName} 
         userId={this.state.userId} 
         isLoggedIn={this.state.isLoggedIn} 
+        isAdmin={this.state.isAdmin} 
         onUserLogin={this.userLogin}
         onUserLogout={this.userLogout}/>
       </header>
       <br/><br/>
 
-    <Router>  
+    <Router basename='/ncaa'>  
       <Switch>
         <Route path="/login">
           <Login onUserLogin={this.userLogin}/>
         </Route>
         <Route path="/register">
-          <Register />
+          <Register onUserLogin={this.userLogin}/>
         </Route>
         <Route path="/admin">
-          <Admin />
+          <Admin onUserLogin={this.userLogin}/>
         </Route>
         <Route path="/tourney">
           <Tourney />
@@ -77,16 +78,28 @@ class App extends Component {
   userLogin() {
     const user = localStorage.getItem("ncaauser");
     if(user != null) {
-      let userJson = JSON.parse(user);
-      let fullName = userJson.firstName + " " + userJson.lastName;
-      this.setState({userName: fullName, userId: userJson.id, isLoggedIn: true});
+      try {
+        let userJson = JSON.parse(user);
+        let fullName = userJson.firstName + " " + userJson.lastName;
+        let isUserAdmin = userJson.admin;
+        this.setState({userName: fullName, 
+          userId: userJson.id, 
+          isLoggedIn: true, 
+          isAdmin: isUserAdmin});
+      } catch (error) {
+        localStorage.removeItem("ncaauser");
+        this.setState({userName: '', 
+          userId: '', 
+          isLoggedIn: false, 
+          isAdmin: false});
+      }
     }
   }
   
   userLogout() {
     localStorage.removeItem("ncaauser");
-    this.setState({userName: '', userId: '', isLoggedIn: false});
-    window.location.href = '/'
+    this.setState({userName: '', userId: '', isLoggedIn: false, isAdmin: false});
+    window.location.href = '/ncaa'
   }
 }
 

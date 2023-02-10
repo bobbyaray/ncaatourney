@@ -2,6 +2,7 @@ package com.bray.ncaa.controller;
 
 import com.bray.ncaa.model.Team;
 import com.bray.ncaa.model.TeamSeed;
+import com.bray.ncaa.service.AdminService;
 import com.bray.ncaa.service.TeamsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,11 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/teams")
+@RequestMapping("/api/teams")
 @Slf4j
 public class TeamController {
     @Autowired
     private TeamsService teamsService;
+
+    @Autowired
+    private AdminService adminService;
 
     @GetMapping("/list")
     public List<Team> getAllTeams(){
@@ -50,7 +54,8 @@ public class TeamController {
 
     @PostMapping
     @PutMapping
-    public void saveTeam(@RequestBody Team team){
+    public void saveTeam(@RequestBody Team team, @RequestHeader String t){
+        adminService.checkAdminAccess(t);
         if(team.getId() == null) {
             teamsService.addTeam(team);
         } else {
@@ -59,7 +64,8 @@ public class TeamController {
     }
 
     @DeleteMapping("/{teamID}")
-    public void deleteTeam(@PathVariable String teamID){
+    public void deleteTeam(@PathVariable String teamID, @RequestHeader String t){
+        adminService.checkAdminAccess(t);
         teamsService.deleteTeam(teamID);
     }
 }

@@ -1,9 +1,6 @@
-import React, { Component } from 'react';
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Card from 'react-bootstrap/Card'
+import React from 'react';
 import { withRouter } from 'react-router-dom';
-import { Alert } from 'react-bootstrap';
+import { Alert, Form, Button, Card } from 'react-bootstrap';
 
 export class Register extends React.Component {
     routeUser = () => {
@@ -28,8 +25,6 @@ export class Register extends React.Component {
 
       this.handleChange = this.handleChange.bind(this);
       this.handleSubmit = this.handleSubmit.bind(this);
-
-      localStorage.removeItem("ncaauser");
     }
 
     handleChange(event) {
@@ -52,21 +47,23 @@ export class Register extends React.Component {
             score: this.state.score})
       };
 
-      fetch('user', requestOptions)
+      fetch('/api/user', requestOptions)
       .then(response => {
         if (response.status !== 200) {
           response.json().then(data => {
             this.setState({error: data.message, showError: true});
-            return Promise.reject(response);
           });
+          throw new Error('Error saving user');
         } else {
           return response.json();
         }
       })
       .then(data => {
+          localStorage.setItem("ncaauser", JSON.stringify(data));
+          this.props.onUserLogin();
           this.state.userid = data.id;
           this.routeUser();
-      });
+      }).catch((error) => console.log(error));
       event.preventDefault();
     }
 
@@ -80,40 +77,61 @@ export class Register extends React.Component {
                 </Alert>
             </div>
             <Card variant='light' text="white" style={{ width: '30rem', backgroundColor: '#306030' }}>
-        <Card.Header>Create an Account</Card.Header>
-          <Card.Body>
+            <Card.Header>Create an Account</Card.Header>
+            <Card.Body>
                 <Form onSubmit={this.handleSubmit}>
                 <Form.Group controlId="formBasicFirst">
                     <Form.Label>First Name</Form.Label>
-                    <Form.Control name="firstName" value={this.state.firstName} type="firstName"  placeholder="First Name" onChange={this.handleChange} />
+                    <Form.Control name="firstName" 
+                    value={this.state.firstName} 
+                    type="firstName"  
+                    placeholder="First Name" 
+                    onChange={this.handleChange} />
                   </Form.Group>
   
                   <Form.Group controlId="formBasicLast">
                     <Form.Label>Last Name</Form.Label>
-                    <Form.Control name="lastName" value={this.state.lastName} type="lastName" placeholder="Last Name" onChange={this.handleChange} />
+                    <Form.Control name="lastName" 
+                    value={this.state.lastName} 
+                    type="lastName" 
+                    placeholder="Last Name" 
+                    onChange={this.handleChange} />
                   </Form.Group>
                   <Form.Group controlId="formBasicEmail">
                     <Form.Label>Email address</Form.Label>
-                    <Form.Control name="email" value={this.state.email} type="email" placeholder="Enter email" onChange={this.handleChange} />
+                    <Form.Control name="email" 
+                    value={this.state.email} 
+                    type="email"
+                    placeholder="Enter email" 
+                    onChange={this.handleChange} />
                   </Form.Group>
   
                   <Form.Group controlId="formBasicPassword">
                     <Form.Label>Password</Form.Label>
-                    <Form.Control name="password" value={this.state.password} type="password" placeholder="Password" onChange={this.handleChange} />
+                    <Form.Control name="password" 
+                    value={this.state.password} 
+                    type="password" 
+                    placeholder="Password" 
+                    onChange={this.handleChange} />
                   </Form.Group>
                   <Form.Group controlId="formBasicLast">
                     <Form.Label>Display Name</Form.Label>
-                    <Form.Control name="displayName" value={this.state.displayName} type="displayName" placeholder="Display Name" onChange={this.handleChange} />
+                    <Form.Control name="displayName" 
+                    value={this.state.displayName} 
+                    type="displayName" 
+                    placeholder="Display Name" 
+                    onChange={this.handleChange} />
                   </Form.Group>
                   <Button onClick={this.handleSubmit} variant="primary">
                     Submit
                   </Button>
                 </Form>
-          </Card.Body>
-          <Card.Body>
-            <Card.Link href="#">Back to login</Card.Link>
-             </Card.Body>
-        </Card></div>);
+              </Card.Body>
+              <Card.Body>
+                <Card.Link href="/ncaa/login">Back to login</Card.Link>
+              </Card.Body>
+            </Card>
+            </div>);
     }
 }
 

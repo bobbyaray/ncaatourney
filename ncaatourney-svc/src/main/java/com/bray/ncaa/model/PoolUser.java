@@ -30,4 +30,7 @@ public class PoolUser {
     private String seed_14;
     private String seed_15;
     private String seed_16;
+
+    private boolean isAdmin;
+    private String adminToken;
 }

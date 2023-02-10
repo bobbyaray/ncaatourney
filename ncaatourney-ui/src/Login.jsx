@@ -1,6 +1,5 @@
-import React, { Component } from 'react';
+import React from 'react';
 import Form from 'react-bootstrap/Form'
-import FormControl from 'react-bootstrap/FormControl'
 import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { withRouter } from 'react-router-dom';
@@ -17,8 +16,11 @@ class Login extends React.Component {
           showError: false
         };
 
+        
+
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.checkTourneyRedirect();
       }
 
       handleChange(event) {
@@ -36,13 +38,14 @@ class Login extends React.Component {
 
       const { history } = this.props;
 
-      fetch('/user/login', requestOptions)
+      fetch('/api/user/login', requestOptions)
       .then(response => {
         if (response.status !== 200) {
           response.json().then(data => {
             this.setState({error: data.message, showError: true});
             return Promise.reject(response);
           });
+          throw new Error('Error on user login');
        } else {
           return response.json();
        }
@@ -50,10 +53,29 @@ class Login extends React.Component {
       .then(data => {
         localStorage.setItem("ncaauser", JSON.stringify(data));
         this.props.onUserLogin();
-        history.push('/useraccount/' + data.id);
-      });
+        if(data.admin) {
+          history.push('/admin');
+        }
+        else history.push('/useraccount/' + data.id);
+      }).catch((error) => console.log(error));
       
       event.preventDefault();
+    }
+
+    checkTourneyRedirect = () => {
+      if(window.location.pathname === '/' || window.location.pathname === '/ncaa') {
+        // Check for tourney state. If started, redirect to standings.
+        var stateUrl = '/api/pool/state';
+        fetch(stateUrl)
+        .then(response => response.json())
+        .then(data => {
+            let tourneyHasStarted = (data.state === 'TOURNEY');
+            if(tourneyHasStarted) {
+              const { history } = this.props;
+              history.push('/tourney');
+            }
+        });
+      }
     }
 
     render(){
@@ -81,7 +103,7 @@ class Login extends React.Component {
                   <Button onClick={this.handleSubmit} variant="primary">
                     Submit
                   </Button>&nbsp;
-                  <Button href="/register" variant="primary">
+                  <Button href="/ncaa/register" variant="primary">
                     Create an Account
                   </Button>
                 </Form>

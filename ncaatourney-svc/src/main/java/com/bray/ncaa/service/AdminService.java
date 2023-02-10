@@ -5,10 +5,12 @@ import com.bray.ncaa.model.PoolState;
 import com.bray.ncaa.model.TourneyState;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Calendar;
-import java.util.List;
+import java.security.SecureRandom;
+import java.util.*;
 
 @Service
 @Slf4j
@@ -19,34 +21,47 @@ public class AdminService {
     @Autowired
     private TeamsService teamService;
 
-    public void savePoolState(PoolState state){
-        PoolState currentState = this.getCurrentState();
-        currentState.setState(state.getState());
-        currentState.setTourneyYear(state.getTourneyYear());
+    @Autowired
+    private UsersService usersService;
 
-        log.info("Saving pool state: " + currentState.toString());
-        stateRepository.save(currentState);
-    }
+    @Autowired
+    private PoolStateService poolStateService;
 
-    public PoolState getCurrentState() {
-        // There should only be one state present
-        List<PoolState> state =  stateRepository.findAll();
-        if(state == null || state.size() == 0) return resetPoolState();
-        else return state.get(0);
-    }
+    private Set<String> adminTokens;
 
     public void resetPool() {
-        //usersService.deleteAllUsers();
+        log.info("Resetting the pool.");
+        usersService.deleteAllUsers();
         teamService.deleteAllTeams();
-        resetPoolState();
+        poolStateService.resetPoolState();
     }
 
-    public PoolState resetPoolState() {
-        stateRepository.deleteAll();
-        PoolState state = new PoolState();
-        state.setTourneyYear(Calendar.getInstance().get(Calendar.YEAR));
-        state.setState(TourneyState.ADMIN_PICKS);
-        stateRepository.save(state);
-        return state;
+    /**
+     * Create a token for admin access. Pretty basic security after an admin login.
+     * We can enhance this in the future.
+     *
+     * @return
+     */
+    public String getAdminToken() {
+        if(adminTokens == null) adminTokens = new HashSet<>();
+
+        SecureRandom secureRandom = new SecureRandom(); //threadsafe
+        Base64.Encoder base64Encoder = Base64.getUrlEncoder();
+        byte[] randomBytes = new byte[24];
+        secureRandom.nextBytes(randomBytes);
+
+        String newToken = base64Encoder.encodeToString(randomBytes);
+        log.info("New Admin Token generated: {}", newToken);
+        adminTokens.add(newToken);
+        return newToken;
+    }
+
+    public void checkAdminAccess(String t) {
+        log.info("Checking access token: {}", t);
+        if(!adminTokens.contains(t)) {
+            log.info("Access token check failed: {}", t);
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Admin token not present or invalid");
+        }
     }
 }

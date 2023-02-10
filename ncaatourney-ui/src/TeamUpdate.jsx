@@ -5,6 +5,24 @@ import Form from 'react-bootstrap/Form'
 import Button from 'react-bootstrap/Button'
 
 class TeamUpdate extends React.Component {
+    checkAdmin = () => {
+        let user = localStorage.getItem("ncaauser");
+        if(user != null) {
+          let userJson = JSON.parse(user);
+          let isUserAdmin = userJson.admin;
+          
+          if(!isUserAdmin) {
+            const { history } = this.props;
+            history.push('/'); 
+          } else {
+            this.setState({adminToken: userJson.adminToken});
+          }
+        } else {
+          const { history } = this.props;
+          history.push('/'); 
+        }
+      }
+
     routeToAdmin = () => {
         const { history } = this.props;
         history.push('/admin');
@@ -13,7 +31,7 @@ class TeamUpdate extends React.Component {
     getTeamInfo = () => {
         const {id} = this.props.match.params;
   
-        var teamUrl = '/teams/'+ id;
+        var teamUrl = '/api/teams/'+ id;
         fetch(teamUrl)
         .then(response => response.json())
         .then(data => {
@@ -33,7 +51,7 @@ class TeamUpdate extends React.Component {
     saveTeamInfo= () => {
         const requestOptions = {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 'Content-Type': 'application/json', 't' : this.state.adminToken },
             body: JSON.stringify({ 
               id: this.state.id,
               seed: this.state.seed, 
@@ -47,7 +65,11 @@ class TeamUpdate extends React.Component {
               score2: this.state.score2})
         };
   
-        fetch('/teams', requestOptions).then(this.routeToAdmin());
+        fetch('/api/teams', requestOptions).then(this.routeToAdmin());
+    }
+
+    componentDidMount() {
+        this.checkAdmin();
     }
 
     constructor(props){
@@ -62,7 +84,8 @@ class TeamUpdate extends React.Component {
           score16: 0,
           score8: 0,
           score4: 0,
-          score2: 0  
+          score2: 0,
+          adminToken: ''  
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -82,12 +105,12 @@ class TeamUpdate extends React.Component {
             <h3 style={{padding: "10px", display: "flex", justifyContent: "left", alignItems: "left"}}>
               Update Team
             </h3>
-            <div style={{padding: "10px", justifyContent: "left", alignItems: "left", width: "60%"}}>
+            <div style={{padding: "10px", justifyContent: "left", alignItems: "left", width: "80%"}}>
             <Form>
             <Table striped bordered hover size="sm">
             <thead>
                 <tr>
-                <th>Seed</th>
+                <th style={{width: '100px'}}>Seed</th>
                 <th>Name</th>
                 <th>64</th>
                 <th>32</th>
@@ -102,7 +125,13 @@ class TeamUpdate extends React.Component {
                 <tr>
                 <td>
                     <Form.Group controlId="seed">
-                        <Form.Control as="select" name="seed" className="mr-sm-2" id="inlineFormCustomSelect" custom value={this.state.seed} onChange={this.handleChange}>
+                        <Form.Control 
+                            as="select" 
+                            name="seed" 
+                            className="mr-sm-2" 
+                            id="inlineFormCustomSelect" 
+                            custom value={this.state.seed} 
+                            onChange={this.handleChange}>
                             <option>1</option>
                             <option>2</option>
                             <option>3</option>

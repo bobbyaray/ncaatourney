@@ -15,6 +15,9 @@ public class TeamsService {
     @Autowired
     private TeamRepository teamRepository;
 
+    @Autowired
+    private StandingsService standingsService;
+
     public void addTeam(Team team) {
         validateNewTeam(team);
 
@@ -25,6 +28,7 @@ public class TeamsService {
     public void updateTeam(Team team) {
         log.info("Updating team: {}", team);
         teamRepository.save(team);
+        standingsService.updateStandings();
     }
 
     public void deleteTeam(String teamID) {

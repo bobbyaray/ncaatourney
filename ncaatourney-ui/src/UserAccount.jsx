@@ -3,11 +3,21 @@ import { withRouter } from "react-router-dom";
 import { ToggleButton, ToggleButtonGroup, Form, Button, Table, Alert } from 'react-bootstrap';
 
 class UserAccount extends React.Component {
+    getTourneyStarted = () => {
+        var stateUrl = '/api/pool/state';
+        fetch(stateUrl)
+        .then(response => response.json())
+        .then(data => {
+            let tourneyHasStarted = (data.state === 'TOURNEY');
+            this.setState({tourneyStarted: tourneyHasStarted});
+        });
+    }
+
     getUserInfo = () => {
         const {id} = this.props.match.params;
   
         // Get the users information
-        var userUrl = '/user/'+ id;
+        var userUrl = '/api/user/'+ id;
         fetch(userUrl)
         .then(response => response.json())
         .then(data => {
@@ -61,12 +71,12 @@ class UserAccount extends React.Component {
             })
           };
       
-          fetch('/user', requestOptions)
+          fetch('/api/user', requestOptions)
           .then(this.setState({successMessage: 'User updated successfully', showSuccess: true}));
     }
 
     updateSeedPicks = () => {
-        var teamsUrl = '/teams/groupbyseed';
+        var teamsUrl = '/api/teams/groupbyseed';
         fetch(teamsUrl)
         .then(response => response.json())
         .then(data => {
@@ -109,15 +119,58 @@ class UserAccount extends React.Component {
             showSuccess: false,
             showError: false,
             successMessage: '',
-            errorMEssage: ''
+            errorMessage: '',
+            tourneyStarted: 'false'
         };
 
         this.handleChange = this.handleChange.bind(this);
         this.getUserInfo();
         this.updateSeedPicks();
+        this.getTourneyStarted();
     }
 
     render(){
+        const renderPicks = () => {
+            if(this.state.tourneyStarted) {
+                return(<p>The tournament has started and the picks are now locked. Please
+                    check the home page to see your picks and scores. You can still
+                    update your display name.
+                </p>)
+            } else {
+                return (<Table hover size="sm">
+                <thead>
+                    <th>Seed</th>
+                    <th>Picks</th>
+                </thead>
+                <tbody>
+                    {this.state.seedPicks.map((seedPick, seedidx) => (
+                    <tr><td>{seedPick.seed}</td>
+                        <td>
+                            <ToggleButtonGroup 
+                            type="radio" 
+                            value={this.state[`seed_${seedidx+1}`]} 
+                            name={`seed_${seedidx+1}`} 
+                            style={{width: "100%"}}>
+                                {seedPick.teams.map((team) => (
+                                <ToggleButton
+                                    type="radio"
+                                    variant={'outline-primary'}
+                                    value={team.id}
+                                    style={{width: "25%"}}
+                                    onChange={this.handleChange}
+                                >
+                                    {team.name}
+                                </ToggleButton>
+                                ))}
+                            </ToggleButtonGroup>
+                        </td>
+                    </tr>
+                    ))}
+                </tbody>
+            </Table>)
+            }
+        }
+
         return(<div style={{padding: "0px"}}>
             <h2 style={{paddingLeft: "20px", paddingBottom: "10px", display: "flex", justifyContent: "left", alignItems: "left"}}>
                 User Account Page
@@ -129,7 +182,7 @@ class UserAccount extends React.Component {
                     {this.state.successMessage}
                 </Alert>
             </div>
-            <div style={{paddingLeft: "20px", display: "flex", justifyContent: "left", alignItems: "left", width: "50%"}}>
+            <div style={{paddingLeft: "20px", display: "flex", justifyContent: "left", alignItems: "left", width: "65%"}}>
         <Table striped bordered size="sm">
             <tbody>
                 <tr><td>First Name</td><td>{this.state.firstName}</td></tr>
@@ -151,38 +204,10 @@ class UserAccount extends React.Component {
         </div>
         <div style={{paddingLeft: "20px", display: "flex",
         justifyContent: "left",
-        alignItems: "left", width: "50%"}}>
-        <Table hover size="sm">
-            <thead>
-                <th>Seed</th>
-                <th>Picks</th>
-            </thead>
-            <tbody>
-                {this.state.seedPicks.map((seedPick, seedidx) => (
-                <tr><td>{seedPick.seed}</td>
-                    <td>
-                        <ToggleButtonGroup 
-                        type="radio" 
-                        value={this.state[`seed_${seedidx+1}`]} 
-                        name={`seed_${seedidx+1}`} 
-                        style={{width: "100%"}}>
-                            {seedPick.teams.map((team) => (
-                            <ToggleButton
-                                type="radio"
-                                variant={'outline-primary'}
-                                value={team.id}
-                                style={{width: "25%"}}
-                                onChange={this.handleChange}
-                            >
-                                {team.name}
-                            </ToggleButton>
-                            ))}
-                        </ToggleButtonGroup>
-                    </td>
-                </tr>
-                ))}
-            </tbody>
-        </Table>
+        alignItems: "left", width: "80%"}}>
+        {renderPicks()}
+
+
         </div>
         <div style={{paddingLeft: "20px", display: "flex",
         justifyContent: "left",

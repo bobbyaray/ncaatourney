@@ -1,41 +1,62 @@
-import React, { Component } from 'react';
-import Form from 'react-bootstrap/Form'
-import Button from 'react-bootstrap/Button'
-import Table from 'react-bootstrap/Table'
-import Row from 'react-bootstrap/Row';
-import Col from 'react-bootstrap/Col';
+import React from 'react';
 import { withRouter } from "react-router-dom";
+import { Form, Button, Table, Row, Col } from 'react-bootstrap';
 
 class Admin extends React.Component {
+  checkAdmin = () => {
+    let user = localStorage.getItem("ncaauser");
+    if(user != null) {
+      let userJson = JSON.parse(user);
+      let isUserAdmin = userJson.admin;
+      
+      if(!isUserAdmin) {
+        const { history } = this.props;
+        history.push('/'); 
+      } else {
+        this.setState({adminToken: userJson.adminToken});
+      }
+    } else {
+      const { history } = this.props;
+      history.push('/'); 
+    }
+  }
+
+  componentDidMount() {
+    this.checkAdmin();
+    this.fetchPoolState();
+    this.updateTeams();
+    this.updateUsers();
+  }
+
   addTeam = (event) => {
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json', 't' : this.state.adminToken},
       body: JSON.stringify({ 
         name: this.state.add_team_name, 
         seed: this.state.add_team_seed,
         alive: true})
     };
 
-    fetch('/teams', requestOptions).then(response => this.updateTeams());
+    fetch('/api/teams', requestOptions).then(response => this.updateTeams());
     event.preventDefault();
 
-    };   
+  };   
 
   updateTourney = () => {
     const requestOptions = {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {'Content-Type': 'application/json' , 't' : this.state.adminToken},
       body: JSON.stringify({ 
         tourneyYear: this.state.tourney_year, 
         state: this.state.tourney_state})
     };
 
-    fetch('/pool/state', requestOptions).then(response => this.fetchPoolState());
+    fetch('/api/pool/state', requestOptions).then(response => this.fetchPoolState());
   };
   
   updateTeams = () => {
-    var teamsUrl = '/teams/list';
+    var teamsUrl = '/api/teams/list';
     fetch(teamsUrl)
     .then(response => response.json())
     .then(data => {
@@ -44,7 +65,7 @@ class Admin extends React.Component {
   }
 
   updateUsers = () => {
-    var userUrl = '/user/list';
+    var userUrl = '/api/user/list';
     fetch(userUrl)
     .then(response => response.json())
     .then(data => {
@@ -53,7 +74,7 @@ class Admin extends React.Component {
   }
 
   fetchPoolState = () => {
-    var stateUrl = '/pool/state';
+    var stateUrl = '/api/pool/state';
     fetch(stateUrl)
     .then(response => response.json())
     .then(data => {
@@ -68,17 +89,17 @@ class Admin extends React.Component {
     // Delete the team
     const requestOptions = {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', 't' : this.state.adminToken }
     };
 
-    var deleteTeamUrl = '/teams/' + teamId;
+    var deleteTeamUrl = '/api/teams/' + teamId;
     fetch(deleteTeamUrl, requestOptions)
     .then(response => this.updateTeams());
   }
 
   deleteUser  = async(userId) => {
     // Get the user email to display to user
-    var getUserUrl = '/user/' + userId;
+    var getUserUrl = '/api/user/' + userId;
     const userRes = await fetch(getUserUrl);
     const userJson = await userRes.json();
     const userEmail = userJson.email;
@@ -91,17 +112,60 @@ class Admin extends React.Component {
     // Delete the team
     const requestOptions = {
       method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' }
+      headers: { 'Content-Type': 'application/json', 't' : this.state.adminToken  }
     };
 
-    var deleteUserUrl = '/user/' + userId;
+    var deleteUserUrl = '/api/user/' + userId;
     fetch(deleteUserUrl, requestOptions)
     .then(response => this.updateUsers());
+  }
+
+  resetPool = () => {
+    // Ask for confirmation first
+    if(window.confirm("Are you sure you want to reset the pool?") != true) return;
+
+    // Delete the team
+    const requestOptions = {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 't' : this.state.adminToken  }
+    };
+
+    var resetUrl = '/api/pool/reset';
+    fetch(resetUrl, requestOptions)
+    .then(response => {
+      this.fetchPoolState();
+      this.updateTeams();
+      this.updateUsers();
+    });
   }
 
   updateTeam  = (teamId) => {
     const { history } = this.props;
     history.push('/teamupdate/' + teamId);  
+  }
+
+  loginAsUser = (userID) => {
+    const { history } = this.props;
+
+    const requestOptions = {
+      headers: {'t' : this.state.adminToken }
+    };
+
+    fetch('/api/pool/loginuser/' + userID, requestOptions)
+    .then(response => {
+      if (response.status !== 200) {
+        response.json().then(data => {
+          return Promise.reject(response);
+        });
+    } else {
+        return response.json();
+    }
+    })
+    .then(data => {
+      localStorage.setItem("ncaauser", JSON.stringify(data));
+      this.props.onUserLogin();
+      history.push('/useraccount/' + data.id);
+    });    
   }
 
   handleChange(event) {
@@ -117,13 +181,14 @@ class Admin extends React.Component {
           add_team_name: '',
           add_team_seed: 1,
           teams: [],
-          users: []
+          users: [],
+          alertMsg: '',
+          alertMsgShow: '',
+          alertVariant: '',
+          adminToken: ''
       };
 
       this.handleChange = this.handleChange.bind(this);
-      this.fetchPoolState();
-      this.updateTeams();
-      this.updateUsers();
     }
 
     render(){
@@ -141,6 +206,9 @@ class Admin extends React.Component {
                 </Col>
                 <Col>
                   State
+                </Col>
+                <Col>
+                  &nbsp;
                 </Col>
                 <Col>
                   &nbsp;
@@ -168,8 +236,13 @@ class Admin extends React.Component {
                 </Form.Group>
                 </Col>
                 <Col>
-                <Button onClick={this.handleSubmit} variant="primary" className="btn btn-primary btn" onClick={this.updateTourney}>
+                <Button className="btn btn-primary btn" onClick={this.updateTourney}>
                     Update Tourney
+                </Button>
+                </Col>
+                <Col>
+                <Button className="btn btn-danger btn" onClick={this.resetPool}>
+                    Reset Pool
                 </Button>
                 </Col>
                 </Row>
@@ -233,7 +306,7 @@ class Admin extends React.Component {
                   </Row>
               </Form>
                   </div>
-            <div style={{padding: "20px", justifyContent: "left", alignItems: "left", width: "65%"}}>
+            <div style={{padding: "20px", justifyContent: "left", alignItems: "left", width: "80%"}}>
             <Table striped bordered hover size="sm">
             <thead>
                 <tr>
@@ -294,7 +367,6 @@ class Admin extends React.Component {
                 <th>Email</th>
                 <th>First Name</th>
                 <th>Last Name</th>
-                <th>Display Name</th>
                 <th>Options</th>
                 </tr>
             </thead>
@@ -304,13 +376,12 @@ class Admin extends React.Component {
                 <td>{user.email}</td>
                 <td>{user.firstName}</td>
                 <td>{user.lastName}</td>
-                <td>{user.displayName}</td>
                 <td>
-                  <Button type="button" className="btn btn-primary btn-sm">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
-                    <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
-                    </svg>
-                    &nbsp; Update
+                <Button type="button" className="btn btn-primary btn-sm" onClick={() => {this.loginAsUser(user.id)}}>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10z"/>
+                  </svg>
+                    &nbsp; Login as User
                   </Button>&nbsp;
                   <Button type="button" className="btn btn-danger btn-sm" onClick={() => {this.deleteUser(user.id)}}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
