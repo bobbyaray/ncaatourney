@@ -4,6 +4,8 @@ import Button from 'react-bootstrap/Button'
 import Card from 'react-bootstrap/Card'
 import { withRouter } from 'react-router-dom';
 import { Alert } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
 
 class Login extends React.Component {
@@ -80,35 +82,38 @@ class Login extends React.Component {
 
     render(){
         return(
-            <div>
+          <Container fluid="xs">
+            <Row className="justify-content-sm-center">
+            <div class="col-lg-6 col-md-6 col-sm-6">
             <h2>NCAA Tournament Pool</h2>
             <div style={{ display: 'flex',  justifyContent:'center', alignItems:'center'}}>
-            <Alert show={this.state.showError} variant="danger" style={{width: "30rem"}}>
+            <Alert show={this.state.showError} variant="danger">
                     {this.state.error}
                 </Alert>
             </div>
-        <Card variant='light' text="white" style={{ width: '30rem', backgroundColor: '#306030' }}>
-        <Card.Header>Login</Card.Header>
-          <Card.Body>
-                <Form onSubmit={this.handleSubmit}>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control name="email" value={this.state.email} type="email" placeholder="Enter email" onChange={this.handleChange} />
-                  </Form.Group>
-  
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control name="password" value={this.state.password} type="password" placeholder="Password" onChange={this.handleChange} />
-                  </Form.Group>
-                  <Button onClick={this.handleSubmit} variant="primary">
-                    Submit
-                  </Button>&nbsp;
-                  <Button href="/ncaa/register" variant="primary">
-                    Create an Account
-                  </Button>
-                </Form>
-          </Card.Body>
-        </Card></div>);
+            <Card variant='light' text="white" className="m-5 border-0 shadow" style={{backgroundColor: '#306030' }}>
+              <Card.Body>
+                    <Form onSubmit={this.handleSubmit}>
+                      <Form.Group controlId="formBasicEmail">
+                        <Form.Label>Email address</Form.Label>
+                        <Form.Control name="email" value={this.state.email} type="email" placeholder="Enter email" onChange={this.handleChange} />
+                      </Form.Group>
+      
+                      <Form.Group controlId="formBasicPassword">
+                        <Form.Label>Password</Form.Label>
+                        <Form.Control name="password" value={this.state.password} type="password" placeholder="Password" onChange={this.handleChange} />
+                      </Form.Group>
+                      <Button onClick={this.handleSubmit} variant="primary">
+                        Submit
+                      </Button>&nbsp;
+                      <Button href="/ncaa/register" variant="primary">
+                        Create an Account
+                      </Button>
+                    </Form>
+              </Card.Body>
+            </Card>
+            </div>
+          </Row></Container>);
     }
 }
 

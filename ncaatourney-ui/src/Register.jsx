@@ -1,6 +1,8 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { Alert, Form, Button, Card } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
 export class Register extends React.Component {
     routeUser = () => {
@@ -69,69 +71,71 @@ export class Register extends React.Component {
 
     render(){
         return(
-            <div>
-            <h2>NCAA Tournament Pool</h2>
-            <div style={{ display: 'flex',  justifyContent:'center', alignItems:'center'}}>
-            <Alert show={this.state.showError} variant="danger" style={{width: "30rem"}}>
-                    {this.state.error}
+          <Container fluid="xs">
+            <Row className="justify-content-sm-center">
+              <div class="col-lg-8 col-md-8 col-sm-8">
+                <h2>NCAA Tournament Pool</h2>
+                <Alert show={this.state.showError} variant="danger">
+                  {this.state.error}
                 </Alert>
-            </div>
-            <Card variant='light' text="white" style={{ width: '30rem', backgroundColor: '#306030' }}>
-            <Card.Header>Create an Account</Card.Header>
-            <Card.Body>
-                <Form onSubmit={this.handleSubmit}>
-                <Form.Group controlId="formBasicFirst">
-                    <Form.Label>First Name</Form.Label>
-                    <Form.Control name="firstName" 
-                    value={this.state.firstName} 
-                    type="firstName"  
-                    placeholder="First Name" 
-                    onChange={this.handleChange} />
-                  </Form.Group>
-  
-                  <Form.Group controlId="formBasicLast">
-                    <Form.Label>Last Name</Form.Label>
-                    <Form.Control name="lastName" 
-                    value={this.state.lastName} 
-                    type="lastName" 
-                    placeholder="Last Name" 
-                    onChange={this.handleChange} />
-                  </Form.Group>
-                  <Form.Group controlId="formBasicEmail">
-                    <Form.Label>Email address</Form.Label>
-                    <Form.Control name="email" 
-                    value={this.state.email} 
-                    type="email"
-                    placeholder="Enter email" 
-                    onChange={this.handleChange} />
-                  </Form.Group>
-  
-                  <Form.Group controlId="formBasicPassword">
-                    <Form.Label>Password</Form.Label>
-                    <Form.Control name="password" 
-                    value={this.state.password} 
-                    type="password" 
-                    placeholder="Password" 
-                    onChange={this.handleChange} />
-                  </Form.Group>
-                  <Form.Group controlId="formBasicLast">
-                    <Form.Label>Display Name</Form.Label>
-                    <Form.Control name="displayName" 
-                    value={this.state.displayName} 
-                    type="displayName" 
-                    placeholder="Display Name" 
-                    onChange={this.handleChange} />
-                  </Form.Group>
-                  <Button onClick={this.handleSubmit} variant="primary">
-                    Submit
-                  </Button>
-                </Form>
-              </Card.Body>
-              <Card.Body>
-                <Card.Link href="/ncaa/login">Back to login</Card.Link>
-              </Card.Body>
-            </Card>
-            </div>);
+                <Card variant='light' text="white" className="m-5 border-0 shadow" 
+                  style={{backgroundColor: '#306030' }}>
+                  <Card.Header>Create an Account</Card.Header>
+                  <Card.Body>
+                      <Form onSubmit={this.handleSubmit}>
+                      <Form.Group controlId="formBasicFirst">
+                          <Form.Label>First Name</Form.Label>
+                          <Form.Control name="firstName" 
+                          value={this.state.firstName} 
+                          type="firstName"  
+                          placeholder="First Name" 
+                          onChange={this.handleChange} />
+                        </Form.Group>
+        
+                        <Form.Group controlId="formBasicLast">
+                          <Form.Label>Last Name</Form.Label>
+                          <Form.Control name="lastName" 
+                          value={this.state.lastName} 
+                          type="lastName" 
+                          placeholder="Last Name" 
+                          onChange={this.handleChange} />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicEmail">
+                          <Form.Label>Email address</Form.Label>
+                          <Form.Control name="email" 
+                          value={this.state.email} 
+                          type="email"
+                          placeholder="Enter email" 
+                          onChange={this.handleChange} />
+                        </Form.Group>
+        
+                        <Form.Group controlId="formBasicPassword">
+                          <Form.Label>Password</Form.Label>
+                          <Form.Control name="password" 
+                          value={this.state.password} 
+                          type="password" 
+                          placeholder="Password" 
+                          onChange={this.handleChange} />
+                        </Form.Group>
+                        <Form.Group controlId="formBasicLast">
+                          <Form.Label>Display Name</Form.Label>
+                          <Form.Control name="displayName" 
+                          value={this.state.displayName} 
+                          type="displayName" 
+                          placeholder="Display Name" 
+                          onChange={this.handleChange} />
+                        </Form.Group>
+                        <Button onClick={this.handleSubmit} variant="primary">
+                          Submit
+                        </Button>
+                      </Form>
+                    </Card.Body>
+                  <Card.Body>
+                    <Card.Link href="/ncaa/login">Back to login</Card.Link>
+                  </Card.Body>
+                </Card>
+              </div>
+            </Row></Container>);
     }
 }
 

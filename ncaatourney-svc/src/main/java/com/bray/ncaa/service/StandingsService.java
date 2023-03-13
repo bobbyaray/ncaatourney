@@ -5,12 +5,14 @@ import com.bray.ncaa.dao.TeamRepository;
 import com.bray.ncaa.model.PoolUser;
 import com.bray.ncaa.model.StandingsEntry;
 import com.bray.ncaa.model.Team;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 public class StandingsService {
     List<StandingsEntry> entries;
@@ -27,6 +29,7 @@ public class StandingsService {
     }
 
     public void updateStandings(){
+        log.info("Updating tournament standings");
         entries = new ArrayList<>();
 
         // Load all teams into a map

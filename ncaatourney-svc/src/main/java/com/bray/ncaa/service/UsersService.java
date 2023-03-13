@@ -20,6 +20,9 @@ public class UsersService {
     @Autowired
     private PoolStateService poolStateService;
 
+    @Autowired
+    private StandingsService standingsService;
+
     public List<PoolUser> getAllPoolUsers(){
         return userRepository.findAll();
     }
@@ -44,6 +47,7 @@ public class UsersService {
 
     public PoolUser saveUser(PoolUser user){
         PoolState state = poolStateService.getCurrentState();
+        log.info("Tourney State: {}", state.getState());
 
         if(user.getId() != null) {
             log.info("Updating user: {}", user);
@@ -71,7 +75,14 @@ public class UsersService {
                 currentUser.setSeed_16(user.getSeed_16());
             }
 
-            return userRepository.save(currentUser);
+            PoolUser updatedUser = userRepository.save(currentUser);
+
+            if (state.getState() == TourneyState.TOURNEY) {
+                // Update the tourney page if user updates name
+                standingsService.updateStandings();
+            }
+
+            return updatedUser;
         }
 
         // New user. Verify email and display name are unique.

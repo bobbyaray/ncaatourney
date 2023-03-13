@@ -21,4 +21,10 @@ public class StandingsController {
     public List<StandingsEntry> getStandings(){
         return standingsService.getStandings();
     }
+
+    @GetMapping("/update")
+    public void updateStandings() {
+        standingsService.updateStandings();
+        log.info("Standings updated successfully");
+    }
 }

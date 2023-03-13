@@ -1,6 +1,6 @@
 import React from 'react';
 import { withRouter } from "react-router-dom";
-import { Form, Button, Table, Row, Col } from 'react-bootstrap';
+import { Form, Button, Table, Alert } from 'react-bootstrap';
 
 class Admin extends React.Component {
   checkAdmin = () => {
@@ -38,7 +38,21 @@ class Admin extends React.Component {
         alive: true})
     };
 
-    fetch('/api/teams', requestOptions).then(response => this.updateTeams());
+    fetch('/api/teams', requestOptions)
+    .then(response => {
+      if (response.status !== 200) {
+        response.json().then(data => {
+          this.setState({teamAlert: data.message, showTeamAlert: true, teamAlertVariant: "danger"});
+          return Promise.reject(response);
+        });
+        throw new Error('Error adding team');
+      } else {
+        this.updateTeams()
+        var successMsg = "Team: " + this.state.add_team_name + " seed: " + this.state.add_team_seed + " added successfully";
+        this.setState({teamAlert: successMsg, showTeamAlert: true, teamAlertVariant: "success"});
+      }
+    });
+
     event.preventDefault();
 
   };   
@@ -52,7 +66,20 @@ class Admin extends React.Component {
         state: this.state.tourney_state})
     };
 
-    fetch('/api/pool/state', requestOptions).then(response => this.fetchPoolState());
+    fetch('/api/pool/state', requestOptions)
+    .then(response => {
+      if (response.status !== 200) {
+        response.json().then(data => {
+          this.setState({tourneyAlert: data.message, showTourneyAlert: true, tourneyAlertVariant: "danger"});
+          return Promise.reject(response);
+        });
+        throw new Error('Error updating tourney');
+      } else {
+        this.fetchPoolState()
+        var successMsg = "Tourney state updated successfully."
+        this.setState({tourneyAlert: successMsg, showTourneyAlert: true, tourneyAlertVariant: "success"});
+      }
+    });
   };
   
   updateTeams = () => {
@@ -117,7 +144,11 @@ class Admin extends React.Component {
 
     var deleteUserUrl = '/api/user/' + userId;
     fetch(deleteUserUrl, requestOptions)
-    .then(response => this.updateUsers());
+    .then(response => {
+      this.updateUsers()
+      var successMsg = "User " + userId + " has been deleted."
+      this.setState({userAlert: successMsg, userAlertVariant: "success", showUserAlert: true});
+    });
   }
 
   resetPool = () => {
@@ -173,7 +204,8 @@ class Admin extends React.Component {
     const value = event.target.value;
     this.setState({[name]: value});
   }
-    constructor(props){
+    
+constructor(props){
       super(props);
       this.state = {
           tourney_year: '',
@@ -182,10 +214,17 @@ class Admin extends React.Component {
           add_team_seed: 1,
           teams: [],
           users: [],
-          alertMsg: '',
-          alertMsgShow: '',
           alertVariant: '',
-          adminToken: ''
+          adminToken: '',
+          tourneyAlert: '',
+          tourneyAlertVariant:'success',
+          showTourneyAlert: false,
+          teamAlert: '',
+          showTeamAlert: false,
+          teamAlertVariant:'success',
+          userAlert: '',
+          showUserAlert: false,
+          userAlertVariant:'success'
       };
 
       this.handleChange = this.handleChange.bind(this);
@@ -195,37 +234,22 @@ class Admin extends React.Component {
         return(<div>
             <h2>Admin Page</h2>
             <hr/>
-            <h4 style={{padding: "20px", display: "flex", justifyContent: "left", alignItems: "left"}}>
+            <h4 style={{paddingLeft: "20px", display: "flex", justifyContent: "left", alignItems: "left"}}>
               Tourney
             </h4>
             <div style={{padding: "20px", display: "flex", justifyContent: "left", alignItems: "left"}}>
             <Form>
-              <Row>
-                <Col>
-                  Year
-                </Col>
-                <Col>
-                  State
-                </Col>
-                <Col>
-                  &nbsp;
-                </Col>
-                <Col>
-                  &nbsp;
-                </Col>
-              </Row>
-              <Row>
-                <Col>
-                <Form.Group controlId="year">
+            <Alert show={this.state.showTourneyAlert} variant={this.state.tourneyAlertVariant}>
+                {this.state.tourneyAlert}
+              </Alert>
+                Year <Form.Group controlId="year">
                     <Form.Control type="text" 
                     placeholder="year" 
                     name="tourney_year" 
                     value={this.state.tourney_year} 
                     onChange={this.handleChange}/>
                 </Form.Group>
-                </Col>
-                <Col>
-                <Form.Group controlId="exampleForm.ControlSelect1">
+                State<Form.Group controlId="exampleForm.ControlSelect1">
                     <Form.Control as="select" name="tourney_state" 
                     value={this.state.tourney_state} className="mr-sm-2" 
                     id="inlineFormCustomSelect" custom onChange={this.handleChange}>
@@ -234,45 +258,27 @@ class Admin extends React.Component {
                     <option>TOURNEY</option>
                     </Form.Control>
                 </Form.Group>
-                </Col>
-                <Col>
                 <Button className="btn btn-primary btn" onClick={this.updateTourney}>
                     Update Tourney
-                </Button>
-                </Col>
-                <Col>
+                </Button>&nbsp;&nbsp;
                 <Button className="btn btn-danger btn" onClick={this.resetPool}>
                     Reset Pool
                 </Button>
-                </Col>
-                </Row>
             </Form>
             </div>
             <hr/>
-            <h4 style={{padding: "20px", display: "flex", justifyContent: "left", alignItems: "left"}}>
+            <h4 style={{paddingLeft: "20px", display: "flex", justifyContent: "left", alignItems: "left"}}>
               Teams
             </h4>
-            <div style={{padding: "20px", display: "flex",justifyContent: "left", alignItems: "left"}}>                
+            <div style={{padding: "20px", display: "flex",justifyContent: "left", alignItems: "left"}}>              
               <Form>
-              <Row>
-                <Col>
-                  Team
-                </Col>
-                <Col>
-                  Seed
-                </Col>
-                <Col>
-                  &nbsp;
-                </Col>
-              </Row>
-                <Row>
-                  <Col>
-                    <Form.Group controlId="name">
+              <Alert show={this.state.showTeamAlert} variant={this.state.teamAlertVariant}>
+                  {this.state.teamAlert}
+                </Alert>
+                    Team<Form.Group controlId="name">
                       <Form.Control name="add_team_name" type="name"  placeholder="Team Name" value={this.state.add_team_name} onChange={this.handleChange}/>
                     </Form.Group>
-                  </Col>
-                  <Col>
-                  <Form.Group controlId="seed">
+                  Seed<Form.Group controlId="seed">
                   <Form.Control as="select" name="add_team_seed" className="mr-sm-2" id="inlineFormCustomSelect" custom value={this.state.add_team_seed} onChange={this.handleChange}>
                     <option>1</option>
                     <option>2</option>
@@ -292,8 +298,6 @@ class Admin extends React.Component {
                     <option>16</option>
                   </Form.Control>
                   </Form.Group>
-                  </Col>
-                  <Col xs="auto">
                   <Form.Group controlId="formBasicFirst">
                     <Button type="button" className="btn btn-primary btn" onClick={this.addTeam}>
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-plus-lg" viewBox="0 0 16 16">
@@ -302,11 +306,9 @@ class Admin extends React.Component {
                       &nbsp; Add Team
                     </Button>
                   </Form.Group>
-                  </Col>
-                  </Row>
               </Form>
                   </div>
-            <div style={{padding: "20px", justifyContent: "left", alignItems: "left", width: "80%"}}>
+            <div class="col-lg-12 col-md-12 col-sm-12" style={{paddingLeft: "20px", justifyContent: "left", alignItems: "left"}}>
             <Table striped bordered hover size="sm">
             <thead>
                 <tr>
@@ -358,9 +360,10 @@ class Admin extends React.Component {
             <h4 style={{padding: "20px", display: "flex", justifyContent: "left",alignItems: "left"}}>
               Users
             </h4>
-            <div style={{padding: "20px",
-          justifyContent: "left",
-          alignItems: "left", width: "80%"}}>
+            <div class="col-lg-12 col-md-12 col-sm-12" style={{padding: "20px", justifyContent: "left", alignItems: "left"}}>
+            <Alert show={this.state.showUserAlert} variant={this.state.userAlertVariant}>
+                {this.state.userAlert}
+              </Alert>
             <Table striped bordered hover size="sm">
             <thead>
                 <tr>

@@ -1,6 +1,8 @@
 import React from 'react';
 import { withRouter } from "react-router-dom";
-import { ToggleButton, ToggleButtonGroup, Form, Button, Table, Alert } from 'react-bootstrap';
+import { Form, Button, Table, Alert } from 'react-bootstrap';
+import Container from 'react-bootstrap/Container';
+import Row from 'react-bootstrap/Row';
 
 class UserAccount extends React.Component {
     getTourneyStarted = () => {
@@ -72,7 +74,10 @@ class UserAccount extends React.Component {
           };
       
           fetch('/api/user', requestOptions)
-          .then(this.setState({successMessage: 'User updated successfully', showSuccess: true}));
+          .then(() => {
+            this.setState({successMessage: 'User Account updated successfully', showSuccess: true})
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          });
     }
 
     updateSeedPicks = () => {
@@ -130,6 +135,30 @@ class UserAccount extends React.Component {
     }
 
     render(){
+        const renderUserInfo = () => {
+                return(
+                <div class="col-lg-8 col-md-8 col-sm-8">
+                    <Table bordered size="sm">
+                        <tbody>
+                            <tr><td>First Name</td><td>{this.state.firstName}</td></tr>
+                            <tr><td>Last Name</td><td>{this.state.lastName}</td></tr>
+                            <tr><td>Email</td><td>{this.state.email}</td></tr>
+                            <tr><td>Display Name</td>
+                                <td>
+                                <Form.Group controlId="displayName">
+                                    <Form.Control type="text" 
+                                    placeholder="displayName" 
+                                    name="displayName" 
+                                    value={this.state.displayName} 
+                                    onChange={this.handleChange}/>
+                                </Form.Group>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </Table>
+                </div>)
+        }
+
         const renderPicks = () => {
             if(this.state.tourneyStarted) {
                 return(<p>The tournament has started and the picks are now locked. Please
@@ -137,93 +166,60 @@ class UserAccount extends React.Component {
                     update your display name.
                 </p>)
             } else {
-                return (<Table hover size="sm">
-                <thead>
-                    <th>Seed</th>
-                    <th>Picks</th>
-                </thead>
-                <tbody>
-                    {this.state.seedPicks.map((seedPick, seedidx) => (
-                    <tr><td>{seedPick.seed}</td>
-                        <td>
-                            <ToggleButtonGroup 
-                            type="radio" 
-                            value={this.state[`seed_${seedidx+1}`]} 
-                            name={`seed_${seedidx+1}`} 
-                            style={{width: "100%"}}>
-                                {seedPick.teams.map((team) => (
-                                <ToggleButton
-                                    type="radio"
-                                    variant={'outline-primary'}
-                                    value={team.id}
-                                    style={{width: "25%"}}
-                                    onChange={this.handleChange}
-                                >
-                                    {team.name}
-                                </ToggleButton>
-                                ))}
-                            </ToggleButtonGroup>
-                        </td>
-                    </tr>
-                    ))}
-                </tbody>
-            </Table>)
+                return (
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <br/>
+                        <h3>Picks</h3>
+                        {this.state.seedPicks.map((seedPick, seedidx) => (
+                            <Form.Group controlId="exampleForm.ControlSelect1">
+                                <Form.Label style={{fontSize:12}}>{seedidx+1} seed</Form.Label>
+                                <Form.Control as="select" name={`seed_${seedidx+1}`}
+                                value={this.state[`seed_${seedidx+1}`]}
+                                id="inlineFormCustomSelect" custom onChange={this.handleChange}>
+                                    <option selected disabled>{seedidx+1} seed</option>
+                                    {seedPick.teams.map((team) => (
+                                        <option value={team.id}>{team.name}</option>
+                                    ))}
+                                </Form.Control>
+                            </Form.Group>
+                        ))}
+                    </div>
+                )
             }
         }
 
-        return(<div style={{padding: "0px"}}>
-            <h2 style={{paddingLeft: "20px", paddingBottom: "10px", display: "flex", justifyContent: "left", alignItems: "left"}}>
-                User Account Page
-            </h2>
-            <div style={{padding: "20px", display: "flex",
-                justifyContent: "left",
-                alignItems: "left", width: "30%"}}>
-                <Alert show={this.state.showSuccess} variant="success" >
-                    {this.state.successMessage}
-                </Alert>
-            </div>
-            <div style={{paddingLeft: "20px", display: "flex", justifyContent: "left", alignItems: "left", width: "65%"}}>
-        <Table striped bordered size="sm">
-            <tbody>
-                <tr><td>First Name</td><td>{this.state.firstName}</td></tr>
-                <tr><td>Last Name</td><td>{this.state.lastName}</td></tr>
-                <tr><td>Email</td><td>{this.state.email}</td></tr>
-                <tr><td>Display Name</td>
-                    <td>
-                    <Form.Group controlId="displayName">
-                        <Form.Control type="text" 
-                        placeholder="displayName" 
-                        name="displayName" 
-                        value={this.state.displayName} 
-                        onChange={this.handleChange}/>
-                    </Form.Group>
-                    </td>
-                </tr>
-            </tbody>
-        </Table>
-        </div>
-        <div style={{paddingLeft: "20px", display: "flex",
-        justifyContent: "left",
-        alignItems: "left", width: "80%"}}>
-        {renderPicks()}
-
-
-        </div>
-        <div style={{paddingLeft: "20px", display: "flex",
-        justifyContent: "left",
-        alignItems: "left"}}>
-        <Form.Group controlId="formBasicFirst">
-                    <Button type="button" 
-                    className="btn btn-primary btn" 
-                    onClick={this.saveUser} 
-                    style={{display: "flex", 
-                    justifyContent: "right", 
-                    alignItems: "right"}}>
-                      Update User
-                    </Button>
-                  </Form.Group>
-        </div>
-        </div>);
+        return(
+            <Container fluid="sm">
+                <Row className="justify-content-sm-center">
+                    <h3>User Account</h3>
+                    <div class="col-lg-8 col-md-8 col-sm-8">
+                        <Alert show={this.state.showSuccess} variant="success" >
+                            {this.state.successMessage}
+                        </Alert>
+                    </div>
+                </Row>
+                <Row className="justify-content-sm-center">
+                    {renderUserInfo()}
+                </Row>
+                <Row className="justify-content-sm-center">
+                {renderPicks()}
+                </Row>
+                <Row className="justify-content-sm-center">    
+                    <div class="col-lg-6 col-md-6 col-sm-6">
+                        <Form.Group controlId="formBasicFirst">
+                                    <Button type="button" 
+                                    className="btn btn-primary btn" 
+                                    onClick={this.saveUser} 
+                                    style={{display: "flex", 
+                                    justifyContent: "right", 
+                                    alignItems: "right"}}>
+                                    Update User Account
+                                    </Button>
+                                </Form.Group>
+                                </div>
+                </Row>
+            </Container>
+        );
     }
 }
 

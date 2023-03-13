@@ -8,6 +8,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -54,11 +56,29 @@ public class TeamsService {
     }
 
     private void validateNewTeam(Team team){
+        List<Team> allTeams = getAllTeams();
+
         // Validate name unique
+        Optional<Team> existingTeam = allTeams.stream().filter(t -> t.getName().equals(team.getName())).findAny();
+        if (existingTeam.isPresent()) {
+            log.error("Team name {} is already taken by another team.", team.getName());
+            throw new RuntimeException("Team name: " + team.getName() + " is already taken by another team");
+        }
 
         // Validate seed between 1-16
+        if (team.getSeed() < 1 || team.getSeed() > 16) {
+            log.error("Invalid team seed provided: {}", team.getSeed());
+            throw new RuntimeException("Invalid team seed: " + team.getSeed());
+        }
 
         // Validate that we dont already have too many teams of that seed
+        List<Team> seedTeams = allTeams.stream().filter(
+                t -> t.getSeed() == team.getSeed()).collect(Collectors.toList());
+
+        if (seedTeams.size() >= 4) {
+            log.error("There are already 4 teams with seed {}", team.getSeed());
+            throw new RuntimeException("There are already 4 teams with seed " + team.getSeed());
+        }
 
     }
 }

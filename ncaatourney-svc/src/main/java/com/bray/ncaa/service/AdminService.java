@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
@@ -58,7 +59,7 @@ public class AdminService {
 
     public void checkAdminAccess(String t) {
         log.info("Checking access token: {}", t);
-        if(!adminTokens.contains(t)) {
+        if(ObjectUtils.isEmpty(t) || ObjectUtils.isEmpty(adminTokens) || !adminTokens.contains(t)) {
             log.info("Access token check failed: {}", t);
             throw new ResponseStatusException(
                     HttpStatus.UNAUTHORIZED, "Admin token not present or invalid");

@@ -2,6 +2,7 @@ import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './Login'
 import Admin from './Admin';
+import Rules from './Rules';
 import UserAccount from './UserAccount'
 import Register from './Register'
 import TeamUpdate from './TeamUpdate';
@@ -54,6 +55,9 @@ class App extends Component {
       <Switch>
         <Route path="/login">
           <Login onUserLogin={this.userLogin}/>
+        </Route>
+        <Route path="/rules">
+          <Rules />
         </Route>
         <Route path="/register">
           <Register onUserLogin={this.userLogin}/>
