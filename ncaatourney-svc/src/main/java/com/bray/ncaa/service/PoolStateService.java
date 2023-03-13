@@ -18,6 +18,9 @@ public class PoolStateService {
     private PoolStateRepository stateRepository;
 
     @Autowired
+    private StandingsService standingsService;
+
+    @Autowired
     private TeamsService teamsService;
 
     public void savePoolState(PoolState state){
@@ -31,6 +34,8 @@ public class PoolStateService {
                 log.error("Invalid number of teams: {}. Cannot start tourney.", teams.size());
                 throw new RuntimeException("Invalid number of teams: " + teams.size() + ". Cannot start tourney.");
             }
+
+            standingsService.updateStandings();
         }
 
         currentState.setState(state.getState());
